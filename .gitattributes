@@ -1,0 +1,16 @@
+# Prevent exporting build artifacts and IDE files when creating archives
+/target export-ignore
+/.idea export-ignore
+*.iml export-ignore
+.vscode export-ignore
+
+# Ignore local OS files
+.DS_Store export-ignore
+
+# Maven wrapper
+.mvn/wrapper/maven-wrapper.jar export-ignore
+
+# Logs and temp
+*.log export-ignore
+*.tmp export-ignore
+
