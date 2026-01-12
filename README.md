@@ -21,4 +21,3 @@ mvn -B -DskipTests=false verify
 ```
 
 Para reproduzir localmente, execute o comando acima no diretório do projeto. Lembre-se de abrir um pull request para que o CI rode automaticamente em PRs.
-
