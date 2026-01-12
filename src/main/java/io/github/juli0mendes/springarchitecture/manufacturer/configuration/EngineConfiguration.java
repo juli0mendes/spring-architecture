@@ -1,15 +1,19 @@
 package io.github.juli0mendes.springarchitecture.manufacturer.configuration;
 
 import io.github.juli0mendes.springarchitecture.manufacturer.Engine;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Scope;
 
 import static io.github.juli0mendes.springarchitecture.manufacturer.EngineType.ASPIRATED;
 import static io.github.juli0mendes.springarchitecture.manufacturer.EngineType.ELECTRIC;
 import static io.github.juli0mendes.springarchitecture.manufacturer.EngineType.TURBO;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SINGLETON;
 
 @Configuration
+@Scope(SCOPE_SINGLETON)
 public class EngineConfiguration {
 
     @Bean(name = "aspiratedEngine")
