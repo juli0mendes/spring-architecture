@@ -21,3 +21,11 @@ mvn -B -DskipTests=false verify
 ```
 
 Para reproduzir localmente, execute o comando acima no diretório do projeto. Lembre-se de abrir um pull request para que o CI rode automaticamente em PRs.
+
+## Estrutura do Projeto
+- `src/main/java`: Código-fonte principal da aplicação.
+- `src/test/java`: Testes unitários e de integração.
+- `pom.xml`: Configuração do Maven e dependências do projeto.
+- `.github/workflows/maven.yml`: Configuração do workflow de CI/CD.
+- `README.md`: Documentação do projeto.
+- `.gitignore`: Arquivos e pastas a serem ignorados pelo Git.
