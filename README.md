@@ -1,12 +1,12 @@
 # Spring Architecture
 
-[![Maven CI](https://github.com/juli0mendes/spring-architecture/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/juli0mendes/spring-architecture/actions/workflows/maven.yml)
+[![Maven CI](https://github.com/juli0mendes/spring-architecture/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/juli0mendes/spring-architecture/actions/workflows/main.yml)
 
 Este projeto usa Java 21.
 
 Projeto de exemplo para demonstração de arquitetura com Spring Boot.
 
-O workflow do GitHub Actions (`.github/workflows/maven.yml`) executa build e testes via Maven automaticamente em:
+O workflow do GitHub Actions (`.github/workflows/main.yml`) executa build e testes via Maven automaticamente em:
 
 - push para a branch `main`;
 - push para qualquer branch que comece com `feature*`;
