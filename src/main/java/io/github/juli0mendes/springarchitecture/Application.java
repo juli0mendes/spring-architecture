@@ -3,8 +3,10 @@ package io.github.juli0mendes.springarchitecture;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @SpringBootApplication
+@EnableConfigurationProperties
 public class Application {
 
     public static void main(String[] args) {
@@ -22,5 +24,11 @@ public class Application {
         var applicationName = environment.getProperty("spring.application.name");
 
         System.out.println("Application Name: " + applicationName);
+
+        var value = applicationContext.getBean(ValueExample.class);
+        value.printVar();
+
+        var properties = applicationContext.getBean(PropertiesApp.class);
+        System.out.println("Property from PropertiesApp: " + properties.getVar());
     }
 }
