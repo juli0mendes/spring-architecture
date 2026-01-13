@@ -6,3 +6,8 @@ spring:
   main:
     lazy-initialization: false
 
+app:
+  config:
+    var: value_from_yaml
+  manufacturer:
+    engine-type: ASPIRATED
