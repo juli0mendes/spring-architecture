@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   build:
-    name: Build (skip tests)
+    name: Build
     runs-on: ubuntu-latest
     # roda em pushes para main OU quando PR fechado e merged == true
     if: >
@@ -33,7 +33,7 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build (skip tests)
+      - name: Build
         run: mvn -B -DskipTests=true clean package
 
   unit-tests:
