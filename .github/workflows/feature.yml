@@ -66,14 +66,80 @@ jobs:
             const base = 'main';
             const title = `Auto PR: ${head} → ${base}`;
             const body = `Automated PR created/updated because build and unit tests passed.\n\nBranch: ${head}\nCommit: ${context.sha}`;
-            
+
+            const compare = await github.rest.repos.compareCommits({
+              owner,
+              repo,
+              base,
+              head
+            });
+
+            const commits = (compare.data.commits || []);
+            const assignees = [...new Set(commits.map(c => c.author && c.author.login).filter(Boolean))];
+
+            const labelsSet = new Set();
+            for (const c of commits) {
+              const msg = (c.commit && c.commit.message || '').toLowerCase();
+              if (/\b(feat|feature)(\b|:|\()/i.test(msg)) labelsSet.add('enhancement');
+              if (/\b(fix|bug)(\b|:|\()/i.test(msg)) labelsSet.add('bug');
+            }
+
+            const files = (compare.data.files || []);
+            for (const f of files) {
+              const path = (f.filename || '').toLowerCase();
+              if (path.endsWith('.md') || path.startsWith('docs/') || path.includes('/docs/')) {
+                labelsSet.add('documentation');
+              }
+
+              if (path.startsWith('.github/workflows') || path.includes('.github/workflows') || path === '.github/workflows' || path.includes('jenkinsfile') || path.includes('circleci') || path.includes('.github/workflows/')) {
+                labelsSet.add('ci');
+              }
+
+              if ((path.endsWith('.yml') || path.endsWith('.yaml')) && path.includes('.github')) {
+                labelsSet.add('ci');
+              }
+            }
+
+            const labels = Array.from(labelsSet);
+
+            async function ensureLabel(name, color) {
+              try {
+                await github.rest.issues.getLabel({ owner, repo, name });
+              } catch (err) {
+                if (err.status === 404) {
+                  await github.rest.issues.createLabel({
+                    owner,
+                    repo,
+                    name,
+                    color,
+                    description: 'Label created automatically by CI'
+                  });
+                } else {
+                  throw err;
+                }
+              }
+            }
+
+            if (labels.includes('enhancement')) {
+              await ensureLabel('enhancement', 'a2eeef');
+            }
+            if (labels.includes('bug')) {
+              await ensureLabel('bug', 'd73a4a');
+            }
+            if (labels.includes('documentation')) {
+              await ensureLabel('documentation', '0075ca');
+            }
+            if (labels.includes('ci')) {
+              await ensureLabel('ci', 'f9d0c4');
+            }
+
             const { data: prs } = await github.rest.pulls.list({
               owner,
               repo,
               head: `${owner}:${head}`,
               state: 'open'
             });
-            
+
             if (prs.length > 0) {
               const pr = prs[0];
               await github.rest.pulls.update({
@@ -83,16 +149,36 @@ jobs:
                 title,
                 body
               });
+              if (assignees.length > 0) {
+                try {
+                  await github.rest.issues.addAssignees({
+                    owner,
+                    repo,
+                    issue_number: pr.number,
+                    assignees
+                  });
+                } catch (err) {
+                  console.log('Could not add some assignees:', err.message);
+                }
+              }
+              if (labels.length > 0) {
+                await github.rest.issues.addLabels({
+                  owner,
+                  repo,
+                  issue_number: pr.number,
+                  labels
+                });
+              }
               await github.rest.issues.createComment({
                 owner,
                 repo,
                 issue_number: pr.number,
-                body: 'CI: build e unit tests passaram. PR atualizado automaticamente com o último commit.'
+                body: 'CI: build and unit tests passed. PR updated automatically (assignees/labels applied).'
               });
-              console.log(`PR atualizado: ${pr.html_url}`);
+              console.log(`PR updated: ${pr.html_url}`);
               return;
             }
-            
+
             const { data: newPr } = await github.rest.pulls.create({
               owner,
               repo,
@@ -101,4 +187,26 @@ jobs:
               base,
               body
             });
-            console.log(`PR criado: ${newPr.html_url}`);
+
+            if (assignees.length > 0) {
+              try {
+                await github.rest.issues.addAssignees({
+                  owner,
+                  repo,
+                  issue_number: newPr.number,
+                  assignees
+                });
+              } catch (err) {
+                console.log('Could not add some assignees:', err.message);
+              }
+            }
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner,
+                repo,
+                issue_number: newPr.number,
+                labels
+              });
+            }
+
+            console.log(`PR created: ${newPr.html_url}`);
