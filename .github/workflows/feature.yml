@@ -112,7 +112,7 @@ jobs:
                     repo,
                     name,
                     color,
-                    description: 'Label criada automaticamente pela CI'
+                    description: 'Label created automatically by CI'
                   });
                 } else {
                   throw err;
@@ -158,7 +158,7 @@ jobs:
                     assignees
                   });
                 } catch (err) {
-                  console.log('Não foi possível adicionar alguns assignees:', err.message);
+                  console.log('Could not add some assignees:', err.message);
                 }
               }
               if (labels.length > 0) {
@@ -173,9 +173,9 @@ jobs:
                 owner,
                 repo,
                 issue_number: pr.number,
-                body: 'CI: build e unit tests passaram. PR atualizado automaticamente (assignees/labels aplicados).'
+                body: 'CI: build and unit tests passed. PR updated automatically (assignees/labels applied).'
               });
-              console.log(`PR atualizado: ${pr.html_url}`);
+              console.log(`PR updated: ${pr.html_url}`);
               return;
             }
 
@@ -197,7 +197,7 @@ jobs:
                   assignees
                 });
               } catch (err) {
-                console.log('Não foi possível adicionar alguns assignees:', err.message);
+                console.log('Could not add some assignees:', err.message);
               }
             }
             if (labels.length > 0) {
@@ -209,4 +209,4 @@ jobs:
               });
             }
 
-            console.log(`PR criado: ${newPr.html_url}`);
+            console.log(`PR created: ${newPr.html_url}`);
