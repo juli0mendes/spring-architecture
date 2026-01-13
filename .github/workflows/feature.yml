@@ -67,7 +67,6 @@ jobs:
             const title = `Auto PR: ${head} → ${base}`;
             const body = `Automated PR created/updated because build and unit tests passed.\n\nBranch: ${head}\nCommit: ${context.sha}`;
             
-            // List open PRs that match this head (owner:branch)
             const { data: prs } = await github.rest.pulls.list({
               owner,
               repo,
@@ -77,7 +76,6 @@ jobs:
             
             if (prs.length > 0) {
               const pr = prs[0];
-              // Atualiza título/body do PR existente
               await github.rest.pulls.update({
                 owner,
                 repo,
@@ -85,7 +83,6 @@ jobs:
                 title,
                 body
               });
-              // Adiciona comentário informando que CI passou
               await github.rest.issues.createComment({
                 owner,
                 repo,
@@ -96,7 +93,6 @@ jobs:
               return;
             }
             
-            // Caso não exista PR aberto, cria um novo
             const { data: newPr } = await github.rest.pulls.create({
               owner,
               repo,
