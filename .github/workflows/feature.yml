@@ -1,4 +1,4 @@
-name: CI (build + unit tests) and Upsert PR
+name: Feature CI — Build & Unit Tests & Auto PR to main
 
 on:
   push:
@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   build:
-    name: Build (skip tests)
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -27,7 +27,7 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build (skip tests)
+      - name: Build
         run: mvn -B -DskipTests=true clean package
 
   unit-tests:
