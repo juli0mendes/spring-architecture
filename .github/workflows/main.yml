@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    types: [closed]
 
 concurrency:
   group: main-ci-${{ github.ref }}
