@@ -1,4 +1,4 @@
-name: CI (build + unit tests) and Upsert PR
+name: Feature CI — Build & Unit Tests & Auto PR to main
 
 on:
   push:
