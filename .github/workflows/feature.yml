@@ -83,6 +83,23 @@ jobs:
               if (/\b(feat|feature)(\b|:|\()/i.test(msg)) labelsSet.add('enhancement');
               if (/\b(fix|bug)(\b|:|\()/i.test(msg)) labelsSet.add('bug');
             }
+
+            const files = (compare.data.files || []);
+            for (const f of files) {
+              const path = (f.filename || '').toLowerCase();
+              if (path.endsWith('.md') || path.startsWith('docs/') || path.includes('/docs/')) {
+                labelsSet.add('documentation');
+              }
+
+              if (path.startsWith('.github/workflows') || path.includes('.github/workflows') || path === '.github/workflows' || path.includes('jenkinsfile') || path.includes('circleci') || path.includes('.github/workflows/')) {
+                labelsSet.add('ci');
+              }
+
+              if ((path.endsWith('.yml') || path.endsWith('.yaml')) && path.includes('.github')) {
+                labelsSet.add('ci');
+              }
+            }
+
             const labels = Array.from(labelsSet);
 
             async function ensureLabel(name, color) {
@@ -109,6 +126,12 @@ jobs:
             if (labels.includes('bug')) {
               await ensureLabel('bug', 'd73a4a');
             }
+            if (labels.includes('documentation')) {
+              await ensureLabel('documentation', '0075ca');
+            }
+            if (labels.includes('ci')) {
+              await ensureLabel('ci', 'f9d0c4');
+            }
 
             const { data: prs } = await github.rest.pulls.list({
               owner,
@@ -119,7 +142,6 @@ jobs:
 
             if (prs.length > 0) {
               const pr = prs[0];
-              // Update title/body
               await github.rest.pulls.update({
                 owner,
                 repo,
@@ -128,12 +150,16 @@ jobs:
                 body
               });
               if (assignees.length > 0) {
-                await github.rest.issues.addAssignees({
-                  owner,
-                  repo,
-                  issue_number: pr.number,
-                  assignees
-                });
+                try {
+                  await github.rest.issues.addAssignees({
+                    owner,
+                    repo,
+                    issue_number: pr.number,
+                    assignees
+                  });
+                } catch (err) {
+                  console.log('Não foi possível adicionar alguns assignees:', err.message);
+                }
               }
               if (labels.length > 0) {
                 await github.rest.issues.addLabels({
